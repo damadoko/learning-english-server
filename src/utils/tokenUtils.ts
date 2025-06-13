@@ -5,7 +5,7 @@ export const genToken = (user: User) => {
   return jwt.sign(
     {
       userId: user.id,
-      email: user.username,
+      username: user.username,
     },
     process.env.JWT_SECRET as string,
     { expiresIn: "1Hour" }
