@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-import authRoutes from "./routes/auth";
+import { authRoutes, chatRoutes } from "./routes";
 import sequelize from "./db";
 import "./models";
 
@@ -19,5 +19,6 @@ sequelize.sync().then(() => {
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/chat", chatRoutes);
 
 export default app;
