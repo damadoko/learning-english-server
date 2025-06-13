@@ -1,5 +1,5 @@
 {
-  "target": "ES2020",
+  "target": "ES2021",
   "module": "commonjs",
   "esModuleInterop": true,
   "outDir": "./dist",
@@ -9,6 +9,8 @@
   "skipLibCheck": true,
   "include": ["src/**/*.ts"],
   "compilerOptions": {
-    "esModuleInterop": true
+    "moduleResolution": "nodenext",
+    "esModuleInterop": true,
+    "target": "es2021"
   }
 }
