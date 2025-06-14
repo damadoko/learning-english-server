@@ -1,12 +1,12 @@
 import { OpenAI } from "openai";
 import { ChatCompletionMessageParam } from "openai/resources";
 
-import { TUTOR_PROMPT } from "../constants";
+import { REPLACE_WORD, TRANS_PROMPT, TUTOR_PROMPT } from "../constants";
 
 const openAI = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 type SendMessageToChatGPTParams = {
-  message: string;
+  message?: string;
   histories?: ChatCompletionMessageParam[];
   prompt?: string;
 };
@@ -21,9 +21,13 @@ export const sendMessageToChatGPT = async ({
     messages: [
       { role: "system", content: prompt },
       ...histories,
-      { role: "user", content: message },
+      ...(message ? [{ role: "user", content: message } as const] : []),
     ],
   });
 
   return response.choices[0].message?.content;
+};
+
+export const genTransPrompt = (word: string) => {
+  return TRANS_PROMPT.replaceAll(REPLACE_WORD, word);
 };

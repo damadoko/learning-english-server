@@ -27,15 +27,26 @@ export const TUTOR_PROMPT = `
   You are not allowed to answer questions unrelated to learning English (like math, politics, etc.).
 `;
 
-const TRANS_PROMPT = `Provide the following for the English word proved by user role:
+export const REPLACE_WORD = "<<word>>";
+
+export const TRANS_PROMPT = `Provide the following for the English word "${REPLACE_WORD}":
 1. Vietnamese meaning
 2. English definition
 3. Pronunciation (IPA)
-
-Format the response strictly in JSON:
+If the word does not exist in English, respond with:
+{
+  "en": ${REPLACE_WORD},
+  "vi": "word not found",
+  "enDefinition": "",
+  "pronunciation": ""
+}
+Otherwise, :
 {
   "en": "...",
   "vi": "...",
   "enDefinition": "...",
   "pronunciation": "..."
-}`;
+}
+
+Format the response strictly in JSON
+`;

@@ -1,7 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import { authRoutes, chatRoutes } from "./routes";
+import { authRoutes, chatRoutes, translateRoutes } from "./routes";
 import sequelize from "./db";
 import "./models";
 
@@ -27,5 +27,6 @@ app.use(
 
 app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/translate", translateRoutes);
 
 export default app;
