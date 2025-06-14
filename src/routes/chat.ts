@@ -12,32 +12,44 @@ router.use(authenticateToken);
 
 router.get("/history", async (req: AuthenticatedRequest, res: Response) => {
   try {
-    console.log(req.user);
+    if (!req.user?.id) {
+      res.status(200).json({ success: true, messages: [] });
+      return;
+    }
     const messages = await Message.findAll({
       where: { userId: req.user?.id },
     });
-    console.log(messages);
     if (!messages) {
       return;
     }
-    res.status(200).json({ error: "server error" });
+    res.status(200).json({ success: true, messages });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "server error" });
+    res
+      .status(500)
+      .json({ success: false, error: { message: "server error" } });
   }
 });
 
 router.post("/send", async (req: AuthenticatedRequest, res: Response) => {
+  let userMessageId = null;
   try {
     const { message } = req.body;
     const userId = req.user.id;
 
     if (!message) {
-      res.status(400).json({ error: "Missing message" });
+      res
+        .status(400)
+        .json({ success: false, error: { message: "Missing message" } });
       return;
     }
 
-    await Message.create({ userId, role: "user", content: message });
+    const userMessage = await Message.create({
+      userId,
+      role: "user",
+      content: message,
+    });
+    userMessageId = userMessage.id;
 
     const history = await Message.findAll({
       where: { userId },
@@ -51,12 +63,19 @@ router.post("/send", async (req: AuthenticatedRequest, res: Response) => {
     }));
 
     const reply = await sendMessageToChatGPT(message, chatMessages);
-    await Message.create({ userId, role: "assistant", content: reply });
+    const replyMessage = await Message.create({
+      userId,
+      role: "assistant",
+      content: reply,
+    });
 
-    res.json({ reply });
+    res.json({ success: true, messages: [replyMessage] });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "server error" });
+    if (userMessageId) {
+      await Message.destroy({ where: { id: userMessageId } });
+    }
+    res.status(500).json({ success: false, error: "server error" });
   }
 });
 
