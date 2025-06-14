@@ -1,6 +1,8 @@
 import { OpenAI } from "openai";
 import { ChatCompletionMessageParam } from "openai/resources";
 
+import { SYSTEM_CONTEXT } from "../constants";
+
 const openAI = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export const sendMessageToChatGPT = async (
@@ -9,7 +11,11 @@ export const sendMessageToChatGPT = async (
 ) => {
   const response = await openAI.chat.completions.create({
     model: "gpt-3.5-turbo",
-    messages: [...histories, { role: "user", content: message }],
+    messages: [
+      { role: "system", content: SYSTEM_CONTEXT },
+      ...histories,
+      { role: "user", content: message },
+    ],
   });
 
   return response.choices[0].message?.content;

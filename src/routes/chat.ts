@@ -39,11 +39,10 @@ router.post("/send", async (req: AuthenticatedRequest, res: Response) => {
 
     await Message.create({ userId, role: "user", content: message });
 
-    // Lấy các tin nhắn trước đó (nếu cần gửi kèm context)
     const history = await Message.findAll({
       where: { userId },
       order: [["createdAt", "ASC"]],
-      limit: 10,
+      limit: 5,
     });
 
     const chatMessages = history.map((m) => ({
