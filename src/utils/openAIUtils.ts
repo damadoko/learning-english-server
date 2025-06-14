@@ -1,18 +1,25 @@
 import { OpenAI } from "openai";
 import { ChatCompletionMessageParam } from "openai/resources";
 
-import { SYSTEM_CONTEXT } from "../constants";
+import { TUTOR_PROMPT } from "../constants";
 
 const openAI = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-export const sendMessageToChatGPT = async (
-  message: string,
-  histories: ChatCompletionMessageParam[]
-) => {
+type SendMessageToChatGPTParams = {
+  message: string;
+  histories?: ChatCompletionMessageParam[];
+  prompt?: string;
+};
+
+export const sendMessageToChatGPT = async ({
+  message,
+  histories = [],
+  prompt = TUTOR_PROMPT,
+}: SendMessageToChatGPTParams) => {
   const response = await openAI.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages: [
-      { role: "system", content: SYSTEM_CONTEXT },
+      { role: "system", content: prompt },
       ...histories,
       { role: "user", content: message },
     ],

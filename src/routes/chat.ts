@@ -57,12 +57,12 @@ router.post("/send", async (req: AuthenticatedRequest, res: Response) => {
       limit: 5,
     });
 
-    const chatMessages = history.map((m) => ({
+    const histories = history.map((m) => ({
       role: m.role as "user" | "assistant",
       content: m.content,
     }));
 
-    const reply = await sendMessageToChatGPT(message, chatMessages);
+    const reply = await sendMessageToChatGPT({ message, histories });
     const replyMessage = await Message.create({
       userId,
       role: "assistant",
