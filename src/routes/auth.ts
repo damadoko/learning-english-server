@@ -3,8 +3,20 @@ import bcrypt from "bcrypt";
 
 import { User } from "../models";
 import { genToken } from "../utils/tokenUtils";
+import {
+  AuthenticatedRequest,
+  authenticateToken,
+} from "../middleware/authenticate";
 
 const router = Router();
+
+router.get("/", authenticateToken, async (req: AuthenticatedRequest, res) => {
+  const user = req?.user;
+  res.json({
+    success: true,
+    user,
+  });
+});
 
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
@@ -16,12 +28,16 @@ router.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({ where: { username } });
     if (!user) {
-      res.status(401).json({ error: "User not found" });
+      res
+        .status(401)
+        .json({ success: false, error: { message: "User not found" } });
       return;
     }
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
-      res.status(401).json({ error: "Invalid password" });
+      res
+        .status(401)
+        .json({ success: false, error: { message: "Invalid password" } });
       return;
     }
 
@@ -33,21 +49,28 @@ router.post("/login", async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "server error" });
+    res
+      .status(500)
+      .json({ success: false, error: { message: "server error" } });
   }
 });
 
 router.post("/register", async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
-    res.status(400).json({ error: "Missing email or password" });
+    res.status(400).json({
+      success: false,
+      error: { message: "Missing email or password" },
+    });
     return;
   }
 
   try {
     const existing = await User.findOne({ where: { username } });
     if (existing) {
-      res.status(400).json({ error: "Username already used" });
+      res
+        .status(400)
+        .json({ success: false, error: { message: "Username already used" } });
       return;
     }
 
@@ -66,7 +89,9 @@ router.post("/register", async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Registration failed" });
+    res
+      .status(500)
+      .json({ success: false, error: { message: "Registration failed" } });
   }
 });
 
