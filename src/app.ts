@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import { authRoutes, chatRoutes } from "./routes";
 import sequelize from "./db";
 import "./models";
@@ -17,6 +18,12 @@ sequelize.sync().then(() => {
 });
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
