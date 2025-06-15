@@ -1,24 +1,22 @@
-import { Router } from "express";
+import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 
-import { User } from "../models";
+import { AuthenticatedRequest } from "../middleware/authenticate";
 import { genToken } from "../utils/tokenUtils";
-import {
-  AuthenticatedRequest,
-  authMiddleware,
-} from "../middleware/authenticate";
+import { User } from "../models";
 
-const router = Router();
-
-router.get("/", authMiddleware, async (req: AuthenticatedRequest, res) => {
+export const selfAuth = async (req: AuthenticatedRequest, res) => {
   const user = req?.user;
   res.json({
     success: true,
     user,
   });
-});
+};
 
-router.post("/login", async (req, res) => {
+export const executeLogin = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -53,9 +51,12 @@ router.post("/login", async (req, res) => {
       .status(500)
       .json({ success: false, error: { message: "server error" } });
   }
-});
+};
 
-router.post("/register", async (req, res) => {
+export const executeRegister = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const { username, password } = req.body;
   if (!username || !password) {
     res.status(400).json({
@@ -93,6 +94,4 @@ router.post("/register", async (req, res) => {
       .status(500)
       .json({ success: false, error: { message: "Registration failed" } });
   }
-});
-
-export default router;
+};

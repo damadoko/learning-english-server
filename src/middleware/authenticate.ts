@@ -15,6 +15,7 @@ export const authMiddleware = (
 ): Promise<void> => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
+  console.log({token, secret})
 
   if (!token) {
     res.status(401).json({ message: "Missing token" });
@@ -26,6 +27,7 @@ export const authMiddleware = (
     req.user = { id: decoded.userId, username: decoded.username };
     next();
   } catch (err) {
+    console.log(err)
     res.status(403).json({ message: "Invalid or expired token" });
   }
 };

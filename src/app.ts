@@ -1,11 +1,11 @@
 import express from "express";
-import dotenv from "dotenv";
 import cors from "cors";
+import dotenv from "dotenv";
+dotenv.config();
 import { authRoutes, chatRoutes, translateRoutes } from "./routes";
 import sequelize from "./db";
 import "./models";
 
-dotenv.config();
 const PORT = process.env.PORT || 3001;
 
 const app = express();
