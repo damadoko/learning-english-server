@@ -1,9 +1,10 @@
-import { Router } from "express";
+import { Request, Response } from "express";
 import { genTransPrompt, sendMessageToChatGPT } from "../utils/openAIUtils";
 
-const router = Router();
-
-router.get("/", async (req, res) => {
+export const getTranslation = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const word = req.query?.word;
     if (!word) {
@@ -28,6 +29,4 @@ router.get("/", async (req, res) => {
       .status(500)
       .send({ success: false, error: { message: "Server error" } });
   }
-});
-
-export default router;
+};
