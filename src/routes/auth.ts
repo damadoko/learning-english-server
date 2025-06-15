@@ -5,12 +5,12 @@ import { User } from "../models";
 import { genToken } from "../utils/tokenUtils";
 import {
   AuthenticatedRequest,
-  authenticateToken,
+  authMiddleware,
 } from "../middleware/authenticate";
 
 const router = Router();
 
-router.get("/", authenticateToken, async (req: AuthenticatedRequest, res) => {
+router.get("/", authMiddleware, async (req: AuthenticatedRequest, res) => {
   const user = req?.user;
   res.json({
     success: true,

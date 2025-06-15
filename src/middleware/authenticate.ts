@@ -8,7 +8,7 @@ export interface AuthenticatedRequest extends Request {
   user?: Pick<User, "id" | "username">;
 }
 
-export const authenticateToken = (
+export const authMiddleware = (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction

@@ -3,7 +3,7 @@ import { Response, Router } from "express";
 import { Message } from "../models";
 import {
   AuthenticatedRequest,
-  authenticateToken,
+  authMiddleware,
 } from "../middleware/authenticate";
 import { sendMessageToChatGPT } from "../utils/openAIUtils";
 
@@ -11,7 +11,7 @@ const router = Router();
 
 router.get(
   "/history",
-  authenticateToken,
+  authMiddleware,
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       if (!req.user?.id) {
@@ -36,7 +36,7 @@ router.get(
 
 router.post(
   "/send",
-  authenticateToken,
+  authMiddleware,
   async (req: AuthenticatedRequest, res: Response) => {
     let userMessageId = null;
     try {
